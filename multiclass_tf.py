@@ -5,6 +5,20 @@ from sklearn.datasets import fetch_20newsgroups
 from sklearn.model_selection import train_test_split
 from sklearn.feature_extraction.text import CountVectorizer
 
+def classify_text(model, vectorizer, input_text):
+    # テキストの前処理
+    text_data = vectorizer.transform([input_text]).toarray()
+    text_data = preprocessing.sequence.pad_sequences(text_data, maxlen=max_length)
+
+    # 分類
+    predictions = model.predict(text_data)
+    predicted_label = np.argmax(predictions, axis=-1)
+
+    # ジャンル名を取得
+    class_name = newsgroups.target_names[predicted_label[0]]
+    return class_name
+
+
 # ハイパーパラメータ
 vocab_size = 10000
 max_length = 256
@@ -51,3 +65,9 @@ history = model.fit(train_data, train_labels, epochs=num_epochs, batch_size=batc
 test_loss, test_acc = model.evaluate(test_data, test_labels)
 
 print(f"Test Loss: {test_loss:.4f}, Test Acc: {test_acc:.4f}")
+
+
+#input_text = "The team played well and won the match. It was a great game."
+#output_class = classify_text(model, vectorizer, input_text)
+#print(f"Input Text: {input_text}")
+#print(f"Output Class: {output_class}")
